@@ -1,0 +1,30 @@
+def create_diagram(dot):
+    """Generates a diagram based on a graphviz DOT diagram description.
+
+    Args:
+        dot: diagram description in graphviz DOT syntax
+
+    Returns:
+        A diagram in the PNG image format.
+    """
+    if not dot:
+        raise Exception("syntax: no graphviz definition provided")
+
+    dot_args = [  # These args add a watermark to the dot graphic.
+        "-Glabel=Made on Cloud Run",
+        "-Gfontsize=10",
+        "-Glabeljust=right",
+        "-Glabelloc=bottom",
+        "-Gfontcolor=gray",
+        "-Tpng",
+    ]
+
+    # Uses local `dot` binary from Graphviz:
+    # https://graphviz.gitlab.io
+    image = subprocess.run(
+        ["dot"] + dot_args, input=dot.encode("utf-8"), stdout=subprocess.PIPE
+    ).stdout
+
+    if not image:
+        raise Exception("syntax: bad graphviz definition provided")
+    return image
